@@ -1,4 +1,4 @@
-package study.wf.creating_new_sequence
+package study.wf
 
 import org.junit.jupiter.api.Test
 import org.reactivestreams.Publisher
@@ -8,7 +8,7 @@ import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
 import java.time.Duration
 
-class StepVerifierExampleTest {
+class StepVerifierTest {
 
     @Test
     fun `(foo, bar) 를 검증한다 - expectComplete와 verify를 사용한다`() {
@@ -29,7 +29,7 @@ class StepVerifierExampleTest {
 
     @Test
     fun `(foo, bar) 를 검증한다 - expectNext(multi value)를 사용한다`() {
-        StepVerifier.create(Flux.just("foo", "bar", "completed"))
+        StepVerifier.create(Flux.just("foo", "bar", "completed").log())
                 .expectNext("foo", "bar", "completed") // 다음에 방출되는 시그널은 t1, t2, t3 이다.
                 .verifyComplete()
     }

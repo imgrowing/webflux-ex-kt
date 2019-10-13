@@ -23,4 +23,17 @@ class EtcExamplesTest {
                 }
                 .subscribe{ println(it) }
     }
+
+    @Test
+    fun `generate Flux`() {
+        val flux = Flux.generate<String, Int>(
+                { 0 },
+                { state, sink ->
+                    sink.next("3 x " + state + " = " + 3 * state!!)
+                    if (state == 10) {
+                        sink.complete()
+                    }
+                    state + 1
+                })
+    }
 }
