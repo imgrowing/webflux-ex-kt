@@ -5,6 +5,7 @@ import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import reactor.test.expectError
 import reactor.test.publisher.PublisherProbe
 import java.time.Duration
 
@@ -31,6 +32,66 @@ class StepVerifierTest {
     fun `(foo, bar) 를 검증한다 - expectNext(multi value)를 사용한다`() {
         StepVerifier.create(Flux.just("foo", "bar", "completed").log())
                 .expectNext("foo", "bar", "completed") // 다음에 방출되는 시그널은 t1, t2, t3 이다.
+                .verifyComplete()
+    }
+
+    @Test
+    fun `조회 결과가 empty 이면 특정 처리를 수행한다`() {
+        val emptyStr: String? = null
+        val emptyMono = Mono.justOrEmpty(emptyStr)
+                .hasElement()
+                .map { hasNoElements ->
+                    if (hasNoElements) "not empty"
+                    else "empty"
+                }
+
+        StepVerifier.create(emptyMono.log())
+                .expectNext("empty")
+                .verifyComplete()
+    }
+
+    @Test
+    fun `조회 결과가 not empty 이면 특정 처리를 수행한다`() {
+        val notEmptyStr: String? = "dummy"
+        val notEmptyMono = Mono.justOrEmpty(notEmptyStr)
+                .hasElement()
+                .map { monoHasElements ->
+                    if (monoHasElements) "not empty"
+                    else "empty"
+                }
+
+        StepVerifier.create(notEmptyMono.log())
+                .expectNext("not empty")
+                .verifyComplete()
+    }
+
+    @Test
+    fun `조회 결과가 empty 이면 exception, 그렇지 않으면 특정 처리를 한다`() {
+        val nullableStr: String? = null
+        val emptyOrNotMono = Mono.justOrEmpty(nullableStr)
+                .hasElement()
+                .map { hasNoElements ->
+                    if (!hasNoElements) throw RuntimeException("empty")
+                    else "do something if not empty"
+                }
+
+        StepVerifier.create(emptyOrNotMono.log())
+                .expectError(RuntimeException::class)
+                .verify()
+    }
+
+    @Test
+    fun `조회 결과가 empty 이면 특정 처리를 한다, 그렇지 않으면 exception`() {
+        val nullableStr: String? = "not null"
+        val emptyOrNotMono = Mono.justOrEmpty(nullableStr)
+                .hasElement()
+                .map { hasNoElements ->
+                    if (!hasNoElements) throw RuntimeException("empty")
+                    else "do something if not empty"
+                }
+
+        StepVerifier.create(emptyOrNotMono.log())
+                .expectNext("do something if not empty")
                 .verifyComplete()
     }
 
