@@ -96,6 +96,28 @@ class StepVerifierTest {
     }
 
     @Test
+    fun `Mono가 empty인 경우 map에 진입하는지 테스트`() {
+        val emptyMono = Mono.empty<String>()
+                .map { "invoked" }
+                .defaultIfEmpty("not invoked")
+
+        StepVerifier.create(emptyMono.log())
+                .expectNext("not invoked")
+                .verifyComplete()
+    }
+
+    @Test
+    fun `Mono가 empty인 경우 flatMap에 진입하는지 테스트`() {
+        val emptyMono = Mono.empty<String>()
+                .flatMap { Mono.just("invoked") }
+                .defaultIfEmpty("not invoked")
+
+        StepVerifier.create(emptyMono.log())
+                .expectNext("not invoked")
+                .verifyComplete()
+    }
+
+    @Test
     fun testAppendBoomError() {
         val source = Flux.just("thing1", "thing2")
 
