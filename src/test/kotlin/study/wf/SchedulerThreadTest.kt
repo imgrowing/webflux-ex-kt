@@ -19,7 +19,7 @@ class SchedulerThreadTest {
 
     @Test
     fun `wrappingBlockingMethod - fromCallable + subscribeOn`() {
-        val scheduler = Schedulers.newParallel("asdf")// .newParallel("WRAPPING", 10)
+        val scheduler = Schedulers.boundedElastic()
         val block1 = Mono
                 .fromCallable { blockingMethod(100) }
                 .subscribeOn(scheduler)
@@ -42,7 +42,7 @@ class SchedulerThreadTest {
 
     @Test
     fun `wrappingBlockingMethod - fromCallable + publishOn`() {
-        val scheduler = Schedulers.newParallel("WRAPPING", 10)
+        val scheduler = Schedulers.boundedElastic()
         val block1 = Mono
                 .fromCallable { blockingMethod(100) }
                 .publishOn(scheduler)
