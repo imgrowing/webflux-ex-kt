@@ -7,9 +7,12 @@ import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import reactor.test.expectError
 import reactor.test.publisher.PublisherProbe
+import reactor.util.Loggers
 import java.time.Duration
 
 class StepVerifierTest {
+
+    val log = Loggers.getLogger(this.javaClass)
 
     @Test
     fun `(foo, bar) 를 검증한다 - expectComplete와 verify를 사용한다`() {
