@@ -33,4 +33,15 @@ class KtCollectionTest {
         assertThat(items_123.union(items_34), equalTo(setOf(1, 2, 3, 4)))
         assertThat(items_123.union(items_34), equalTo(setOf(2, 3, 4, 1)))
     }
+
+    @Test
+    fun `list-equals`() {
+        val list1 = listOf("1", "2", "3")
+        val list2 = listOf("3", "2", "1")
+
+        assert(list1 != list2)
+        assert((list1 - list2).size == 0)
+        assert((list1 - list2).isEmpty())
+        assert(list1.toSet() == list2.toSet())
+    }
 }
