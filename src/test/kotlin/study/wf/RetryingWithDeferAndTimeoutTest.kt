@@ -51,6 +51,19 @@ fun main(args: Array<String>) {
             .range(1, 10)
             .flatMap { getResult(it) }
             .subscribe { println(it) }
+/*
+number result 1
+number result 2
+number result 3
+number result 4
+doOnError: num error
+number result 5
+number result 6
+number result 7
+number result 8
+number result 9
+number result 10
+ */
 
     println("=====================")
 
@@ -58,6 +71,20 @@ fun main(args: Array<String>) {
             .range(1, 10)
             .flatMap { getTimeoutResult(it) }
             .subscribe { println(it) }
+/*
+timeout result 1
+timeout result 2
+timeout result 3
+timeout result 4
+doOnError: Did not observe any item or terminal signal within 100ms in 'source(MonoSupplier)' (and no fallback has been configured)
+timeout result 5
+timeout result 6
+timeout result 7
+timeout result 8
+timeout result 9
+doOnError: Did not observe any item or terminal signal within 100ms in 'source(MonoSupplier)' (and no fallback has been configured)
+timeout result 10
+ */
 
     Thread.sleep(500)
 }
