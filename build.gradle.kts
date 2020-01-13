@@ -25,6 +25,7 @@ repositories {
     }
 
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -33,6 +34,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.projectreactor:reactor-kotlin-extensions:1.0.0.M2")
+    implementation("com.beust:klaxon:5.2")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
 //        exclude(module = "junit")
