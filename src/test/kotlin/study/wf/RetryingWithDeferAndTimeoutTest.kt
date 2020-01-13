@@ -18,7 +18,7 @@ fun getResult(number: Int): Mono<String> {
                             "number result $number"
                         }
                         .doOnError { println("doOnError: ${it.message}") }
-                        .retry(1) // defer로 감싼 내부 범위에서만 retry가 수행됨
+                        .retry(1) // Mono.fromSupplier { ... } 로 감싼 내부 대해서만 retry가 수행됨. defer 와는 무관
             }
 }
 
@@ -42,7 +42,7 @@ fun getTimeoutResult(number: Int): Mono<String> {
                         }
                         .timeout(Duration.ofMillis(100))
                         .doOnError { println("doOnError: ${it.message}") }
-                        .retry(1) // defer로 감싼 내부 범위에서만 retry가 수행됨
+                        .retry(1) // Mono.fromSupplier { ... } 로 감싼 내부 범위에서 대해서만 retry가 수행됨. defer 와는 무관
             }
 }
 
