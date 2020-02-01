@@ -8,7 +8,7 @@ import java.time.Duration.ofMillis
 class ConcatMergeZipEx {
 
     @Test
-    fun `concat - 여러 개의 스트림을 연결한다, 한 번에 하나의 스트림씩 읽어들여 합친다`() {
+    fun `concat - 여러 개의 스트림을 연결한다, 한 번에 하나의 스트림씩 읽어들여 합친다, 내부 스트림간의 순서가 유지된다`() {
         Flux
                 .concat(
                         Flux.just(1, 2, 3).delayElements(ofMillis(10)),
@@ -30,7 +30,7 @@ class ConcatMergeZipEx {
     }
 
     @Test
-    fun `merge - 여러 개의 스트림을 연결한다, 동시에 여러 개의 스트림씩 읽어들여 합친다`() {
+    fun `merge - 여러 개의 스트림을 연결한다, 동시에 여러 개의 스트림씩 읽어들여 합친다, 내부 스트림간의 순서가 유지되지 않는다`() {
         Flux
                 .merge(
                         Flux.just(1, 2, 3).delayElements(ofMillis(10)),
