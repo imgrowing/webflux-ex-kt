@@ -115,4 +115,40 @@ class MakeProducingTest {
         Thread.sleep(510)
     }
 
+    @Test
+    fun `repeat - 반복해서 재구독한다`() {
+        Flux
+                .just(1)
+                .repeat()
+                .take(5)
+                .subscribe { println("onNext -> $it") }
+
+        // onNext -> 1
+        // onNext -> 1
+        // onNext -> 1
+        // onNext -> 1
+        // onNext -> 1
+    }
+
+    @Test
+    fun `repeat n - n회 재구독한다, 실제로 emit된 후에 n회 재구독 하기 때문에, 최종 구독 횟수는 n+1 회가 된다`() {
+        Flux
+                .just(1)
+                .repeat(1)
+                .subscribe { println("onNext -> $it") }
+
+        // 총 2회의 구독이 발생함
+        // onNext -> 1
+        // onNext -> 1
+    }
+
+    @Test
+    fun `defaultIfEmpty - 스트림이 비어 있으면 기본값을 반환한다`() {
+        Flux
+                .empty<Int>()
+                .defaultIfEmpty(-1)
+                .subscribe { println("onNext -> $it") }
+
+        // onNext -> -1
+    }
 }
