@@ -127,4 +127,26 @@ class FilteringEx {
         // onNext -> 2
         // onComplete
     }
+
+    @Test
+    fun `sample - 전체 원소 중 일부만 샘플링한다, 시간 구간 마다 마지막 원소를 방출한다`() {
+        Flux
+                .range(1, 100)
+                .delayElements(Duration.ofMillis(10))
+                .sample(Duration.ofMillis(100)) // 최근 100ms 구간 중 맨 마지막 원소만 발생시킨다
+                .subscribeAndPrint()
+        Thread.sleep(1100)
+        // onNext -> 5
+        // onNext -> 13
+        // onNext -> 22
+        // onNext -> 32
+        // onNext -> 40
+        // onNext -> 49
+        // onNext -> 59
+        // onNext -> 67
+        // onNext -> 76
+        // onNext -> 84
+        // onNext -> 93
+    }
+
 }
