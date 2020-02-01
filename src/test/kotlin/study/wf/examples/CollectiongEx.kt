@@ -11,9 +11,10 @@ class CollectiongEx {
         val collectListMono = Flux
                 .just(1, 2, 3, 4, 5)
                 .collectList();
-        collectListMono.subscribe { println("onNext -> $it")}
+        collectListMono.subscribeAndPrint()
 
         // onNext -> [1, 2, 3, 4, 5]
+        // onComplete
     }
 
     @Test
@@ -21,9 +22,10 @@ class CollectiongEx {
         Flux
                 .just(3, 5, 2, 1, 4)
                 .collectSortedList()
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
 
         // onNext -> [1, 2, 3, 4, 5]
+        // onComplete
     }
 
     @Test
@@ -31,9 +33,10 @@ class CollectiongEx {
         Flux
                 .just(3, 5, 2, 1, 4)
                 .collectSortedList(Comparator.reverseOrder())
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
 
         // onNext -> [5, 4, 3, 2, 1]
+        // onComplete
     }
 
     @Test
@@ -47,9 +50,10 @@ class CollectiongEx {
                         p1.second.compareTo(p2.second) * -1 // 역순
 
                 }
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
 
         // onNext -> [(1, C), (1, B), (1, A), (2, D), (2, A)]
+        // onComplete
     }
 
     @Test
@@ -60,9 +64,10 @@ class CollectiongEx {
                         { s -> s },
                         { s -> s.first().toInt() }
                 )
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
 
         // onNext -> {a=97, b=98, c=99}
+        // onComplete
     }
 
     @Test
@@ -73,9 +78,10 @@ class CollectiongEx {
                         { s -> s },
                         { s -> s.first().toInt() }
                 )
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
 
         // onNext -> {a=[97, 97], b=[98, 98], c=[99]}
+        // onComplete
     }
 
     @Test
@@ -85,13 +91,11 @@ class CollectiongEx {
                 .distinct()
                 .subscribeAndPrint();
 
-        /*
-        onNext -> 1
-        onNext -> 2
-        onNext -> 3
-        onNext -> 5
-        onComplete
-        */
+        // onNext -> 1
+        // onNext -> 2
+        // onNext -> 3
+        // onNext -> 5
+        // onComplete
     }
 
     @Test
@@ -101,15 +105,13 @@ class CollectiongEx {
                 .distinctUntilChanged()
                 .subscribeAndPrint();
 
-        /*
-        onNext -> 1
-        onNext -> 2
-        onNext -> 3
-        onNext -> 1
-        onNext -> 2
-        onNext -> 3
-        onNext -> 4
-        onComplete
-        */
+        // onNext -> 1
+        // onNext -> 2
+        // onNext -> 3
+        // onNext -> 1
+        // onNext -> 2
+        // onNext -> 3
+        // onNext -> 4
+        // onComplete
     }
 }

@@ -105,7 +105,7 @@ class ReducingEx {
         Flux
                 .just(3, 5, 2, 1, 4)
                 .sort()
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
 
         /*
         onNext -> 1

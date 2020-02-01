@@ -2,6 +2,7 @@ package study.wf.examples
 
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
+import study.wf.subscribeAndPrint
 import java.time.Duration
 
 class FilteringEx {
@@ -10,7 +11,10 @@ class FilteringEx {
         Flux
                 .range(1, 5)
                 .filter { i -> i % 2 == 0 }
-                .subscribe(::println)
+                .subscribeAndPrint()
+        // onNext -> 2
+        // onNext -> 4
+        // onComplete
     }
 
     @Test
@@ -18,8 +22,8 @@ class FilteringEx {
         Flux
                 .range(1, 5)
                 .ignoreElements()
-                .doOnTerminate { println("onComplete") }
-                .subscribe { println("onNext") } // 호출되지 않음
+                .subscribeAndPrint()
+        // onComplete
     }
 
     @Test
@@ -27,7 +31,10 @@ class FilteringEx {
         Flux
                 .range(1, 5)
                 .takeLast(2)
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
+        // onNext -> 4
+        // onNext -> 5
+        // onComplete
     }
 
     @Test
@@ -35,8 +42,11 @@ class FilteringEx {
         Flux
                 .range(1, 5)
                 .takeUntil { it >= 3 }
-                .subscribe { println("onNext -> $it") }
-        // 1, 2, 3, onComplete
+                .subscribeAndPrint()
+        // onNext -> 1
+        // onNext -> 2
+        // onNext -> 3
+        // onComplete
     }
 
     @Test
@@ -44,8 +54,9 @@ class FilteringEx {
         Flux
                 .range(0, 5)
                 .elementAt(3)
-                .subscribe { println("onNext -> $it") }
-        // 3, onComplete
+                .subscribeAndPrint()
+        // onNext -> 3
+        // onComplete
     }
 
     @Test
@@ -53,20 +64,22 @@ class FilteringEx {
         Flux
                 .just(4)
                 .single()
-                .subscribe { println("onNext -> $it") }
-        // 4, onComplete
+                .subscribeAndPrint()
+        // onNext -> 4
+        // onComplete
 
         Flux
                 .range(0, 1)
                 .single()
-                .subscribe { println("onNext -> $it") }
-        // 0, onComplete
+                .subscribeAndPrint()
+        // onNext -> 0
+        // onComplete
 
         Flux
                 .range(0, 5)
                 .single()
-                .subscribe { println("onNext -> $it") }
-        // IndexOutOfBoundsException: Source emitted more than one item
+                .subscribeAndPrint()
+        // onError -> java.lang.IndexOutOfBoundsException: Source emitted more than one item
         // -> 여러 개의 원소가 있는 경우에는 에러 발생함
     }
 
@@ -76,10 +89,29 @@ class FilteringEx {
                 .range(1, 5)
                 .delayElements(Duration.ofMillis(100))
                 .skip(Duration.ofMillis(150))
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
 
         Thread.sleep(600)
-        // 2, 3, 4, 5
+        // onNext -> 2
+        // onNext -> 3
+        // onNext -> 4
+        // onNext -> 5
+        // onComplete
+    }
+
+    @Test
+    fun `skip - 지정된 갯수 만큼 skip한다, skip이 끝나면 원소를 방출한다`() {
+        Flux
+                .range(1, 5)
+                .delayElements(Duration.ofMillis(100))
+                .skip(2)
+                .subscribeAndPrint()
+
+        Thread.sleep(600)
+        // onNext -> 3
+        // onNext -> 4
+        // onNext -> 5
+        // onComplete
     }
 
     @Test
@@ -88,9 +120,11 @@ class FilteringEx {
                 .range(1, 5)
                 .delayElements(Duration.ofMillis(100))
                 .take(Duration.ofMillis(250))
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
 
         Thread.sleep(600)
-        // 1, 2
+        // onNext -> 1
+        // onNext -> 2
+        // onComplete
     }
 }

@@ -2,8 +2,8 @@ package study.wf.examples
 
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
+import study.wf.subscribeAndPrint
 import java.time.Duration
-import java.util.*
 
 class MappingEx {
 
@@ -12,7 +12,7 @@ class MappingEx {
         Flux
                 .just(1, 2, 3, 4, 5)
                 .map { it * it }
-                .subscribe(::println)
+                .subscribeAndPrint()
     }
 
     @Test
@@ -20,17 +20,28 @@ class MappingEx {
         Flux
                 .just(2, 2, 3, 1)
                 .index()
-                .subscribe { println("index: ${it.t1}, element: ${it.t2}") }
+                .subscribeAndPrint()
+        // Tuple<index, value>이 반환된다.
+        // onNext -> [0,2]
+        // onNext -> [1,2]
+        // onNext -> [2,3]
+        // onNext -> [3,1]
+        // onComplete
     }
 
     @Test
     fun `timestamp operator`() {
         Flux
                 .just(2, 2, 3, 1)
-                .delayElements(Duration.ofSeconds(1))
+                .delayElements(Duration.ofMillis(10))
                 .timestamp()
-                .subscribe { println("${Date(it.t1)} : ${it.t1}, element: ${it.t2}") }
+                .subscribeAndPrint()
 
-        Thread.sleep(4100)
+        Thread.sleep(500)
+        // onNext -> [1580539931041,2]
+        // onNext -> [1580539931052,2]
+        // onNext -> [1580539931063,3]
+        // onNext -> [1580539931073,1]
+        // onComplete
     }
 }

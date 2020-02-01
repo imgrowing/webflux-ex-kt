@@ -3,6 +3,7 @@ package study.wf.examples
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import study.wf.subscribeAndPrint
 import java.lang.Math.abs
 import java.time.Duration
 import java.util.*
@@ -13,68 +14,99 @@ class MakeProducingTest {
     fun `Flux just - single element`() {
         Flux
                 .just(1)
-                .subscribe { println(it) }
+                .subscribeAndPrint()
+        // onNext -> 1
+        // onComplete
     }
 
     @Test
     fun `Flux just - elements`() {
         Flux
                 .just(1, 2, 3)
-                .subscribe { println(it) }
+                .subscribeAndPrint()
+        // onNext -> 1
+        // onNext -> 2
+        // onNext -> 3
+        // onComplete
     }
 
     @Test
     fun `Flux range`() {
         Flux
                 .range(101, 5)
-                .subscribe { println(it) }
+                .subscribeAndPrint()
+        // onNext -> 101
+        // onNext -> 102
+        // onNext -> 103
+        // onNext -> 104
+        // onNext -> 105
+        // onComplete
     }
 
     @Test
     fun `Flux empty`() {
         Flux
                 .empty<String>()
-                .subscribe { println(it) }
+                .subscribeAndPrint()
+        // onComplete
     }
 
     @Test
     fun `Flux error`() {
         Flux
                 .error<RuntimeException>(RuntimeException("error"))
-                .doOnError { println("doOnError: $it") }
-                .subscribe { println("onNext") }
+                .subscribeAndPrint()
+        // onError -> java.lang.RuntimeException: error
     }
 
     @Test
     fun `Flux fromArray`() {
         Flux
                 .fromArray(arrayOf(1, 2, 3))
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
+        // onNext -> 1
+        // onNext -> 2
+        // onNext -> 3
+        // onComplete
     }
 
     @Test
     fun `Flux fromIterable`() {
         Flux
                 .fromIterable(listOf(1, 2, 3))
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
+        // onNext -> 1
+        // onNext -> 2
+        // onNext -> 3
+        // onComplete
     }
 
     @Test
     fun `Flux fromStream`() {
         Flux
                 .fromStream(Stream.of(1, 2, 3))
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
+        // onNext -> 1
+        // onNext -> 2
+        // onNext -> 3
+        // onComplete
     }
 
     @Test
     fun `Flux from publisher`() {
         Flux
                 .from(Flux.just(1, 2, 3))
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
+        // onNext -> 1
+        // onNext -> 2
+        // onNext -> 3
+        // onComplete
 
         Flux
                 .from(Mono.just(11))
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
+        // onNext -> 11
+        // onComplete
     }
 
     @Test
@@ -85,17 +117,29 @@ class MakeProducingTest {
                     Mono.just(Date().time % 10)
                 }
 
-        deferMono.subscribe { println("1st defer -> $it") }
-        deferMono.subscribe { println("2nd defer -> $it") }
-        deferMono.subscribe { println("3rd defer -> $it") }
+        deferMono.subscribeAndPrint()
+        deferMono.subscribeAndPrint()
+        deferMono.subscribeAndPrint()
+        // onNext -> 5
+        // onComplete
+        // onNext -> 8
+        // onComplete
+        // onNext -> 0
+        // onComplete
 
         randomDelay()
 
         val normalMono = Mono.just(Date().time % 10)
 
-        normalMono.subscribe { println("1st mono -> $it") }
-        normalMono.subscribe { println("2nd mono -> $it") }
-        normalMono.subscribe { println("3rd mono -> $it") }
+        normalMono.subscribeAndPrint()
+        normalMono.subscribeAndPrint()
+        normalMono.subscribeAndPrint()
+        // onNext -> 5
+        // onComplete
+        // onNext -> 5
+        // onComplete
+        // onNext -> 5
+        // onComplete
     }
 
     private fun randomDelay() {
@@ -103,16 +147,21 @@ class MakeProducingTest {
     }
 
     @Test
-    fun `inteval - 별도의 스케줄러에서 실행되므로, sleep을 주어야 실행 결과를 확인할 수 있다`() {
+    fun `interval - 별도의 스케줄러에서 실행되므로, sleep을 주어야 실행 결과를 확인할 수 있다`() {
         var counter = 0
         Flux
                 .interval(Duration.ofMillis(100))
                 .map {
                     "interval: " + ++counter
                 }
-                .subscribe { println(it) }
+                .subscribeAndPrint()
 
         Thread.sleep(510)
+        // onNext -> interval: 1
+        // onNext -> interval: 2
+        // onNext -> interval: 3
+        // onNext -> interval: 4
+        // onNext -> interval: 5
     }
 
     @Test
@@ -121,7 +170,7 @@ class MakeProducingTest {
                 .just(1)
                 .repeat()
                 .take(5)
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
 
         // onNext -> 1
         // onNext -> 1
@@ -135,7 +184,7 @@ class MakeProducingTest {
         Flux
                 .just(1)
                 .repeat(1)
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
 
         // 총 2회의 구독이 발생함
         // onNext -> 1
@@ -147,7 +196,7 @@ class MakeProducingTest {
         Flux
                 .empty<Int>()
                 .defaultIfEmpty(-1)
-                .subscribe { println("onNext -> $it") }
+                .subscribeAndPrint()
 
         // onNext -> -1
     }
